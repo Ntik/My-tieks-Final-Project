@@ -5,23 +5,35 @@ import {createStackNavigator} from '@react-navigation/stack';
 import OnboardingScreen from './screens/OnboardingScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
+import MapScreen from './screens/MapScreen';
+
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 // import AsyncStorage from '@react-native-async-storage/async-storage';"@react-native-async-storage/async-storage";
 
+import { Provider } from 'react-redux';
+import { createStore, combineReducers } from 'redux';
+import token from './token.reducer'
 
+const store = createStore(combineReducers({ token }));
 
 const Stack = createStackNavigator();
 
 function App() {
   return(
-  <NavigationContainer>
-  <Stack.Navigator
-  headerMode="none">
-    <Stack.Screen name="Onboarding" component={OnboardingScreen}/>
-    <Stack.Screen name="Login" component={LoginScreen}/>
-    <Stack.Screen name="Signup" component={SignupScreen}/>
-  </Stack.Navigator>
-</NavigationContainer>
+ <Provider store={ store }>
+
+    <NavigationContainer>
+        <Stack.Navigator headerMode="none">
+
+            <Stack.Screen name="Onboarding" component={ OnboardingScreen }/>
+            <Stack.Screen name="Login" component={ LoginScreen }/>
+            <Stack.Screen name="Signup" component={ SignupScreen }/>
+            <Stack.Screen name="MapScreen" component={ MapScreen }/>
+
+        </Stack.Navigator>
+    </NavigationContainer>
+
+ </Provider>
   )
 }
 
