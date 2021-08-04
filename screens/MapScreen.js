@@ -2,10 +2,14 @@
 import * as React from "react";
 import MapView, { Callout, Marker } from "react-native-maps";
 import { Overlay, Button } from "react-native-elements";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
+import FormInput from "../components/FormInput";
+import { Content } from "native-base";
+import { Input } from 'react-native-elements';
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 
 
@@ -79,6 +83,34 @@ function MapScreen() {
         console.log(responseFromServerJsonCat)
   }
 
+const [ title, setTitle ] = React.useState('')
+const [ content, setContent ] = React.useState('')
+
+const [date, setDate] = React.useState(new Date());
+const [mode, setMode] = React.useState('date');
+const [show, setShow] = React.useState(false);
+
+const onChange = (event, selectedDate) => {
+const currentDate = selectedDate || date;
+setDate(currentDate);
+};
+
+const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+
+  const showTimepicker = () => {
+    showMode('time');
+  };
+
+  console.log(date)
+  
+
 
   return (
 
@@ -126,7 +158,7 @@ function MapScreen() {
           listView: { backgroundColor: "white" },
         }}
       />
-        <Overlay 
+        <Overlay style={{ marginTop: 50 }}
             isVisible={visible} 
             onBackdropPress={toggleOverlay}
             fullScreen="true"
@@ -137,7 +169,33 @@ function MapScreen() {
                 )) 
             }
 
+            <Input
+            labelValue={ title }
+            onChangeText={( title ) => setTitle( title )}
+            value={title}
+            placeholder='Ex: concert de piano'
+            />
+
+            <Input style={{ height: 100 }}
+            placeholder='Ex: Viens check ce concert !'
+	        multiline={ true }
+            value={ content }
+            numberOfLines={ 4 }
+            onChangeText={( content ) => setContent( content )}
+            />
+
             
+
+            <DateTimePicker
+            testID="dateTimePicker"
+            value={date}
+            is24Hour={true}
+            display="default"
+            onChange={onChange}
+            />
+
+
+
             
             <Button
             title="Close the window"

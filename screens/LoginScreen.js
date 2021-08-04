@@ -61,7 +61,7 @@ const LoginScreen = (props) => {
                 iconType="user"
                 keyboardType="email-address"
                 autoCapitalize="none"
-                autoCorrect={false}
+                autoCorrect={ false }
             />
             <FormInput
                 labelValue={password}
