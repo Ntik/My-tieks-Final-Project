@@ -89,9 +89,9 @@ function App() {
 //   const [isFirstLaunch, setIsFirstLaunch] = useState(null);
 
 //   useEffect(() => {
-//     AsyncStorage.getItem('alreadyLaunched').then(value => {
+//     AsyncStorage.getItem('Déjà connécté une fois').then(value => {
 //       if(value === null){
-//         AsyncStorage.setItem('alreadyLaunched', 'true');
+//         AsyncStorage.setItem('Déjà connécté une fois', 'true');
 //         setIsFirstLaunch(true);
 //       }else {
 //         setIsFirstLaunch(false);
