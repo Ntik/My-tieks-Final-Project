@@ -14,14 +14,15 @@ function MapScreen() {
     const [selectedCategory, setSelectedCategory] = React.useState('')
     const [categories, setCategories] = React.useState([])
     const [visible, setVisible] = React.useState(false); 
+    const [eventMarker, setEventMarker] = React.useState([])
     const toggleOverlay = () => {
           setVisible(!visible);
         };
 
     React.useEffect(() => {
-        console.log('on est dans le hook deffet')
+        
         const getCategories = async () => {
-            const responseFromServer = await fetch('http://172.16.0.17:3000/all-categories')
+            const responseFromServer = await fetch('https://my-tieks-0001.herokuapp.com/all-categories')
             const responseFromServerJson = await responseFromServer.json()
             console.log(responseFromServerJson)
             setCategories(responseFromServerJson.categories)
@@ -29,10 +30,21 @@ function MapScreen() {
         getCategories()
        
     }, []) 
-
+    React.useEffect(() => {
+        
+      const getMarkers = async () => {
+          const responseForMarker = await fetch('https://my-tieks-0001.herokuapp.com/all-events')
+          const responseForMarkerJson = await responseForMarker.json()
+          // console.log("All Marker ===>",responseForMarkerJson)
+          setEventMarker(responseForMarkerJson.events)
+      }
+      getMarkers()
+     
+  }, []) 
+        console.log("SetEventMarker===>", setEventMarker)
   const [currentLatitude, setCurrentLatitude] = React.useState(0);
   const [currentLongitude, setCurrentLongitude] = React.useState(0);
-  const [listCoord, setListCoord] = React.useState([]);
+  const [eventCoord, setEventCoord] = React.useState({});
   
   const [region, setRegion] = React.useState({
     latitude: 43.3,
@@ -62,48 +74,53 @@ function MapScreen() {
     askPermissions();
   }, []);
 
+  // fonction permettant de mettre à jour l'état de la catégories au click (la selectionner)
   const getCat = (cat) => {
-      console.log(cat._id)
       setSelectedCategory(cat._id)
   }
   const addEvent = async () => {
       console.log(selectedCategory)
       setVisible(false)
-      const responseFromServerCat = await fetch('http://172.16.0.17:3000/add-an-event', {
+      const responseFromServerCat = await fetch('https://my-tieks-0001.herokuapp.com/add-an-event', {
             method: 'POST',
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body:`eventCategoryId=${selectedCategory}&token=yW0LIFRMF1s9aPeU3AGhmyxKOoBHrPFH`
+            body:`eventCategoryId=${selectedCategory}&token=yW0LIFRMF1s9aPeU3AGhmyxKOoBHrPFH&lat=${eventCoord.latitude}&lng=${eventCoord.longitude}`
         })
 
         const responseFromServerJsonCat = await responseFromServerCat.json()
         console.log(responseFromServerJsonCat)
   }
 
-
+      console.log("Coordonnées Event======>",eventCoord)
   return (
 
     <View style={{ flex: 1 }}>
-      <GooglePlacesAutocomplete
+        <Overlay 
+            isVisible={visible} 
+            onBackdropPress={toggleOverlay}
+            fullScreen="true"
+            >
+              <View>
+              <GooglePlacesAutocomplete
         placeholder="Where are you going?"
         fetchDetails={true}
         GooglePlacesSearchQuery={{
           rankby: "distance",
         }}
         onPress={(data, details = null) => {
-          console.log("Data&Details ====>", details);
+         
           setRegion({
             latitude: details.geometry.location.lat,
             longitude: details.geometry.location.lng,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           });
-          setListCoord([
-            ...listCoord,
+          setEventCoord(
             {
               latitude: details.geometry.location.lat,
               longitude: details.geometry.location.lng,
             },
-          ]);
+          );
         }}
         query={{
           key: "AIzaSyBnZ3mKiyqEZceo2br6IUGpRQOSED93bM8",
@@ -122,15 +139,11 @@ function MapScreen() {
           //  radius et location permettent d'affiner la recherche dans un rayon precis autour du point d'ancrage.
         }}
         styles={{
-          container: { flex: 0, width: "100%", elevation: 3 },
+          container: { flex: 0, width: "100%", elevation: 3, zIndex: 1 },
           listView: { backgroundColor: "white" },
         }}
       />
-        <Overlay 
-            isVisible={visible} 
-            onBackdropPress={toggleOverlay}
-            fullScreen="true"
-            >
+              </View>
             {
                 categories.map((category, i) => (
                     <Text key={i} onPress={() => getCat(category)}>{category.name}</Text>   
@@ -156,13 +169,13 @@ function MapScreen() {
         }}
         provider="google"
       >
-        {listCoord.map((lieu, i) => (
+        {/* {listCoord.map((lieu, i) => (
           <Marker
             key={i}
             pinColor="orange"
             coordinate={{ latitude: lieu.latitude, longitude: lieu.longitude }}
           />
-        ))}
+        ))} */}
          <Marker key={"currentPos"}
           pinColor="red"
           title="Hello"
