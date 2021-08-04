@@ -36,13 +36,6 @@ const LoginScreen = (props) => {
             return error
         }
 
-
-        // if (json) {
-        //     return MapScreen
-        // } else {
-        //     return LoginScreen
-        // }
-
     }
 
     return(

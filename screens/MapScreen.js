@@ -136,6 +136,8 @@ function MapScreen() {
                     <Text key={i} onPress={() => getCat(category)}>{category.name}</Text>   
                 )) 
             }
+
+            
             
             <Button
             title="Close the window"
