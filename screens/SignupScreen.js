@@ -2,14 +2,32 @@ import React, { useState } from 'react';
 import { Button, Text, View, TouchableOpacity, Image, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import FormButton from '../components/FormButton';
 import FormInput from '../components/FormInput';
+import { connect } from 'react-redux';
 
 
 
-const SignupScreen = ({navigation}) => {
+const SignupScreen = (props) => {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
+    const [error, setError] = useState('');
+    const addNewuser = async () => {
+        props.navigation.navigate('MapScreen')
+        // const responseFromServer = await fetch('https://my-tieks-0001.herokuapp.com/sign-up', {
+        //     method: 'POST',
+        //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        //     body:`email=${email}&password=${password}`
+        // })
 
+        // const responseFromServerJson = await responseFromServer.json()
+        // if(responseFromServerJson.result){
+        //    props.navigation.navigate('MapScreen')
+        //    props.onSubmitToken(responseFromServerJson.token)
+        // }else {
+        //     setError('Please sign in')
+        //     return error
+        // }
+    }
     return(
 
         <KeyboardAvoidingView
@@ -20,6 +38,7 @@ const SignupScreen = ({navigation}) => {
                 source={require('../assets/Signup.png')}
                 style={styles.logo}
             />
+            <Text>{error}</Text>
             <Text style={styles.text}>Create An Account</Text>
             <FormInput
                 labelValue={email}
@@ -46,11 +65,11 @@ const SignupScreen = ({navigation}) => {
             />
             <FormButton
             buttonTitle="Sign Up"
-            onPress={() => alert('Sign Up Clicked')}
+            onPress={() => addNewuser()}
             />
             
 
-            <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity style={styles.navButton} onPress={() => props.navigation.navigate('Login')}>
                 <Text style={styles.navButtonText}>Have an account? Sign in</Text>
             </TouchableOpacity>
 
@@ -92,7 +111,18 @@ const styles = StyleSheet.create({
     },
 });
 
+function mapDispatchToProps(dispatch) {
+    return {
+      onSubmitToken: function(token) { 
+        dispatch( {type: 'saveToken', token: token }) 
+      }
+    }
+  }
 
-export default SignupScreen;
+
+  export default connect(
+    null, 
+    mapDispatchToProps
+)(SignupScreen);
 
 
