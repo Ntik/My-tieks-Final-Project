@@ -86,9 +86,9 @@ const LoginScreen = (props) => {
                 <Text style={styles.navButtonText}>Forgot Password?</Text>
             </TouchableOpacity>
 
-            {/* <TouchableOpacity style={styles.forgotButton} onPress={() => navigation.navigate('Signup')}>
+            <TouchableOpacity style={styles.forgotButton} onPress={() => props.navigation.navigate('Signup')}>
                 <Text style={styles.navButtonText}>Don't have an account? click here</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
             
         </KeyboardAvoidingView>
        

@@ -13,9 +13,7 @@ import { createStore, combineReducers } from 'redux';
 import token from './token.reducer'
 // import AsyncStorage from '@react-native-async-storage/async-storage';"@react-native-async-storage/async-storage";
 
-import { Provider } from 'react-redux';
-import { createStore, combineReducers } from 'redux';
-import token from './token.reducer'
+
 
 const store = createStore(combineReducers({token}));
 const Stack = createStackNavigator();

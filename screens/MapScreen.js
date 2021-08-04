@@ -21,7 +21,7 @@ function MapScreen() {
     React.useEffect(() => {
         console.log('on est dans le hook deffet')
         const getCategories = async () => {
-            const responseFromServer = await fetch('http://172.16.0.17gi:3000/all-categories')
+            const responseFromServer = await fetch('http://172.16.0.17:3000/all-categories')
             const responseFromServerJson = await responseFromServer.json()
             console.log(responseFromServerJson)
             setCategories(responseFromServerJson.categories)
