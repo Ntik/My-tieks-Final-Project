@@ -3,11 +3,47 @@ import { Button, Text, View, TouchableOpacity, Image, StyleSheet, ScrollView, Ke
 import FormButton from '../components/FormButton';
 import FormInput from '../components/FormInput';
 
+import { connect } from 'react-redux';
+
+const LoginScreen = (props) => {
 
 
-const LoginScreen = ({navigation}) => {
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
+    const [ email, setEmail ] = useState();
+    const [ password, setPassword ] = useState();
+    const [ error, setError ] = useState('');
+
+    const getSignIn = async () => {
+        
+        const responseFromServer = await fetch('https://my-tieks-0001.herokuapp.com/sign-in', {
+            method: 'POST',
+            headers: { "Content-Type" : "application/x-www-form-urlencoded" },
+            body: `email=${email}&password=${password}`
+        });
+
+        const responseFromServerJson = await responseFromServer.json()
+        console.log(responseFromServerJson)
+
+        const userToken = responseFromServerJson.token
+        const result = responseFromServerJson.result
+        
+
+        if (result) {
+            //console.log(userToken)
+            props.navigation.navigate('MapScreen')
+            props.onSubmitToken(userToken)
+        } else {
+            setError('Please go to the sign up page')
+            return error
+        }
+
+
+        // if (json) {
+        //     return MapScreen
+        // } else {
+        //     return LoginScreen
+        // }
+
+    }
 
     return(
 
@@ -22,6 +58,9 @@ const LoginScreen = ({navigation}) => {
                 style={styles.logo}
             />
             <Text style={styles.text}>My Tieks</Text>
+
+            <Text>{ error }</Text>
+
             <FormInput
                 labelValue={email}
                 onChangeText={(userEmail) => setEmail(userEmail)}
@@ -34,21 +73,22 @@ const LoginScreen = ({navigation}) => {
             <FormInput
                 labelValue={password}
                 onChangeText={(userPassword) => setPassword(userPassword)}
+                value={password}
                 placeholderText="Password"
                 iconType="lock"
                 secureTextEntry={true}
             />
             <FormButton
             buttonTitle="Sign In"
-            onPress={() => alert('Sign In Clicked')}
+            onPress={() => getSignIn()}
             />
             <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
                 <Text style={styles.navButtonText}>Forgot Password?</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.forgotButton} onPress={() => navigation.navigate('Signup')}>
+            {/* <TouchableOpacity style={styles.forgotButton} onPress={() => navigation.navigate('Signup')}>
                 <Text style={styles.navButtonText}>Don't have an account? click here</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             
         </KeyboardAvoidingView>
        
@@ -92,5 +132,18 @@ const styles = StyleSheet.create({
 });
 
 
-export default LoginScreen;
+function mapDispatchToProps(dispatch) {
+    return {
+        onSubmitToken: function(token) {
+            dispatch({
+                type: 'saveToken',
+                tokenUser: token
+            })
+        }
+    }
+}
+export default connect (
+    null,
+    mapDispatchToProps
+) (LoginScreen);
 
