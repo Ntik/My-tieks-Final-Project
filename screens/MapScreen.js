@@ -8,7 +8,7 @@ import * as Permissions from 'expo-permissions';
 import FormInput from "../components/FormInput";
 import { Content } from "native-base";
 import { Input } from 'react-native-elements';
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePickerModal from 'react-native-modal-datetime-picker'
 
 
 
@@ -54,6 +54,8 @@ function MapScreen() {
   const [currentLatitude, setCurrentLatitude] = React.useState(0);
   const [currentLongitude, setCurrentLongitude] = React.useState(0);
   const [eventCoord, setEventCoord] = React.useState({});
+  const [title, setTitle] = React.useState('')
+  const [content, setContent] = React.useState('')
   // const [categoryTitle, setCategoryTitle] = React.useState('');
 
   const [region, setRegion] = React.useState({
@@ -97,34 +99,21 @@ function MapScreen() {
     setEventMarker([...eventMarker, responseFromServerJsonEvent.newEvents])
    
   };
-const [ title, setTitle ] = React.useState('')
-const [ content, setContent ] = React.useState('')
 
-const [date, setDate] = React.useState(new Date());
-const [mode, setMode] = React.useState('date');
-const [show, setShow] = React.useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
 
-const onChange = (event, selectedDate) => {
-const currentDate = selectedDate || date;
-setDate(currentDate);
-};
-
-const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
   };
-
-  const showDatepicker = () => {
-    showMode('date');
-  };
-
-  const showTimepicker = () => {
-    showMode('time');
-  };
-
-  console.log(date)
   
-
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+  
+  const handleConfirm = (date) => {
+    console.warn("A date has been picked: ", date);
+    hideDatePicker();
+  };
 
   // console.log("Coordonnées Event======>",eventCoord)
   var catName;
@@ -212,14 +201,17 @@ const showMode = (currentMode) => {
             numberOfLines={ 4 }
             onChangeText={( content ) => setContent( content )}
             />
+            <Button title="Choisir la date" onPress={showDatePicker} />
+                <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date"
+                    onConfirm={handleConfirm}
+                    onCancel={hideDatePicker}
+                />
+            
 
-            <DateTimePicker
-            testID="dateTimePicker"
-            value={date}
-            is24Hour={true}
-            display="default"
-            onChange={onChange}
-            />      
+            
+            
 
           
           {
@@ -257,9 +249,11 @@ const showMode = (currentMode) => {
         <Button title="Close the window" onPress={() => setVisibleFilter(false)}/>
         <Button title="Filter event" onPress={() => {filterEvent();setVisibleFilter(false)}} />
       </Overlay>
-
-      <Button title="Open Overlay" onPress={toggleOverlay} />
-      <Button title="Filter" onPress={toggleOverlayFilter} />
+       
+          <Button title="Open Overlay" onPress={toggleOverlay} />
+          <Button title="Filter" onPress={toggleOverlayFilter} />
+      
+      
 
       <MapView
         style={styles.map}
@@ -316,11 +310,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  centerCat:{
-    flex: 1,
-    color: "red",
-
-  }
+  
 });
 
 export default MapScreen;
