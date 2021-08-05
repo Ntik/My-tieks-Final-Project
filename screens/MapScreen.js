@@ -184,8 +184,6 @@ const showMode = (currentMode) => {
             onChangeText={( content ) => setContent( content )}
             />
 
-            
-
             <DateTimePicker
             testID="dateTimePicker"
             value={date}
