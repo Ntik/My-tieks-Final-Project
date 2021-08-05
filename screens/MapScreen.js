@@ -89,7 +89,7 @@ function MapScreen() {
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `eventCategoryId=${selectedCategory}&token=wGUvb8sxDuKGEQWEQKCWQYLfXfDGa7vY&lat=${eventCoord.latitude}&lng=${eventCoord.longitude}`,
+        body: `eventCategoryId=${selectedCategory}&token=wGUvb8sxDuKGEQWEQKCWQYLfXfDGa7vY&lat=${eventCoord.latitude}&lng=${eventCoord.longitude}&content=${content}`,
       }
     );
 
