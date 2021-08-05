@@ -36,13 +36,6 @@ const LoginScreen = (props) => {
             return error
         }
 
-
-        // if (json) {
-        //     return MapScreen
-        // } else {
-        //     return LoginScreen
-        // }
-
     }
 
     return(
@@ -68,7 +61,7 @@ const LoginScreen = (props) => {
                 iconType="user"
                 keyboardType="email-address"
                 autoCapitalize="none"
-                autoCorrect={false}
+                autoCorrect={ false }
             />
             <FormInput
                 labelValue={password}
