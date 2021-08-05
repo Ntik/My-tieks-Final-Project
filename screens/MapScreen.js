@@ -9,10 +9,10 @@ import * as Permissions from "expo-permissions";
 function MapScreen() {
   const [selectedCategory, setSelectedCategory] = React.useState("");
   const [categories, setCategories] = React.useState([]);
-  const [filterCategories, setFilterCategories] = React.useState([]);
   const [visible, setVisible] = React.useState(false);
   const [visibleFilter, setVisibleFilter] = React.useState(false);
   const [eventMarker, setEventMarker] = React.useState([]);
+  const [eventMarkerCopy, setEventMarkerCopy] = React.useState([]);
   const toggleOverlay = () => {
     setVisible(!visible);
   };
@@ -67,7 +67,7 @@ function MapScreen() {
         });
       }
     }
-    //askPermissions();
+    askPermissions();
   }, []);
 
   // fonction permettant de mettre à jour l'état de la catégories au click (la selectionner)
@@ -78,17 +78,18 @@ function MapScreen() {
   const addEvent = async () => {
     // console.log(selectedCategory)
     setVisible(false);
-    const responseFromServerCat = await fetch(
+    const responseFromServerEvent = await fetch(
       "https://my-tieks-0001.herokuapp.com/add-an-event",
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `eventCategoryId=${selectedCategory}&token=yW0LIFRMF1s9aPeU3AGhmyxKOoBHrPFH&lat=${eventCoord.latitude}&lng=${eventCoord.longitude}`,
+        body: `eventCategoryId=${selectedCategory}&token=wGUvb8sxDuKGEQWEQKCWQYLfXfDGa7vY&lat=${eventCoord.latitude}&lng=${eventCoord.longitude}`,
       }
     );
 
-    const responseFromServerJsonCat = await responseFromServerCat.json();
-    // console.log(responseFromServerJsonCat)
+    const responseFromServerJsonEvent = await responseFromServerEvent.json();
+    setEventMarker([...eventMarker, responseFromServerJsonEvent.newEvents])
+   
   };
 
   // console.log("Coordonnées Event======>",eventCoord)
@@ -107,12 +108,7 @@ function MapScreen() {
 
 
 
-    // const responseForMarker = await fetch(
-    //   "https://my-tieks-0001.herokuapp.com/all-events"
-    // );
-    // const responseForMarkerJson = await responseForMarker.json();
-    // // console.log("All Marker ===>",responseForMarkerJson)
-    // setEventMarker(responseForMarkerJson.events);
+  
 
     
   };
@@ -168,9 +164,10 @@ function MapScreen() {
           />
         </View>
         {categories.map((category, i) => (
-          <Text key={i} onPress={() => getCat(category)}>
-            {category.name}
-          </Text>
+          <Button title={category.name}
+           key={i} onPress={() => getCat(category)}>
+            
+          </Button>
         ))}
 
         <Button title="Close the window" onPress={() => setVisible(false)} />
@@ -183,13 +180,14 @@ function MapScreen() {
         fullScreen="true"
       >
         {categories.map((category, i) => (
-          <Text key={i} onPress={() => getCat(category)}>
-            {category.name}
-          </Text>
+          <Button 
+          title={category.name}
+          key={i} onPress={() => getCat(category)}>
+          </Button>
         ))}
-        <Text>{selectedCategory}</Text>
+        
         <Button title="Close the window" onPress={() => setVisibleFilter(false)}/>
-        <Button title="Filter event" onPress={() => filterEvent()} />
+        <Button title="Filter event" onPress={() => {filterEvent();setVisibleFilter(false)}} />
       </Overlay>
 
       <Button title="Open Overlay" onPress={toggleOverlay} />
@@ -207,12 +205,9 @@ function MapScreen() {
       >
         {
         eventMarker.map((event, i) => {
-          // console.log("table event", event.eventCategoryId);
+          
           categories.map((categorie, i) => {
-            // console.log("table category", categorie._id);
             if (categorie._id == event.eventCategoryId) {
-              // console.log("je suis dans le if");
-              //setCategoryTitle(categorie.name)
               catName = categorie.name;
             }
           });
@@ -253,6 +248,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  centerCat:{
+    flex: 1,
+    color: "red",
+
+  }
 });
 
 export default MapScreen;

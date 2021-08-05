@@ -27,16 +27,16 @@ const OnboardingScreen = ({navigation}) => {
       subtitle: 'My Tieks permets de mieux connaitre l’actualité environnante.',
     },
     {
-        backgroundColor: '#319E9C',
-        image: <Image source={require('../assets/OnBoarding2.png')} style={styles.imagesSizes} />,
-        title: 'Visualisez les événements alentours',
-        subtitle: 'Grâce à votre position, visualisez d’un seul coup d’oeil tous les évènements de votre quartier.',
-      },
-      {
         backgroundColor: '#EEE6A3',
         image: <Image source={require('../assets/OnBoarding3.png')} style={styles.imagesSizes} />,
         title: 'Visualisez les événements alentours',
         subtitle: 'Grâce à votre position, visualisez d’un seul coup d’oeil tous les évènements de votre quartier.',
+      },
+      {
+        backgroundColor: '#319E9C',
+        image: <Image source={require('../assets/OnBoarding2.png')} style={styles.imagesSizes} />,
+        title: 'Participez à la vie de votre quartier',
+        subtitle: "Donnez un coup de main à votre voisin, contribuez à l'économie locale ou encore assistez à un événement culturel.",
       },
      ]}
     />
