@@ -76,11 +76,11 @@ const LoginScreen = (props) => {
             onPress={() => getSignIn()}
             />
             <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
-                <Text style={styles.navButtonText}>Forgot Password?</Text>
+                <Text style={styles.navButtonText}>Mot de Passe Oublié ?</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.forgotButton} onPress={() => props.navigation.navigate('Signup')}>
-                <Text style={styles.navButtonText}>Don't have an account? click here</Text>
+                <Text style={styles.navButtonText}>Pas encore de compte? S'enregistrer </Text>
             </TouchableOpacity>
             
         </KeyboardAvoidingView>
@@ -127,10 +127,10 @@ const styles = StyleSheet.create({
 
 function mapDispatchToProps(dispatch) {
     return {
-        onSubmitToken: function(token) {
+        onSubmitToken: function(tokenUser) {
             dispatch({
                 type: 'saveToken',
-                tokenUser: token
+                token: tokenUser
             })
         }
     }

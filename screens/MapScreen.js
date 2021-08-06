@@ -5,14 +5,14 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-nativ
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-import FormInput from "../components/FormInput";
-import { Content } from "native-base";
+
+import { connect } from 'react-redux';
 import { Input } from 'react-native-elements';
 import DateTimePickerModal from 'react-native-modal-datetime-picker'
 
 
 
-function MapScreen() {
+function MapScreen(props) {
   const [selectedCategory, setSelectedCategory] = React.useState("");
   const [categories, setCategories] = React.useState([]);
   const [visible, setVisible] = React.useState(false);
@@ -84,14 +84,16 @@ function MapScreen() {
   };
 
   const addEvent = async () => {
-    // console.log(selectedCategory)
+    console.log("TOKEN=====>",props.token.token)
+    console.log("CAT=====>",selectedCategory)
+    console.log("CONTENT=====>",content)
     setVisible(false);
     const responseFromServerEvent = await fetch(
       "https://my-tieks-0001.herokuapp.com/add-an-event",
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `eventCategoryId=${selectedCategory}&token=wGUvb8sxDuKGEQWEQKCWQYLfXfDGa7vY&lat=${eventCoord.latitude}&lng=${eventCoord.longitude}&content=${content}`,
+        body: `eventCategoryId=${selectedCategory}&token=${props.token.token}&lat=${eventCoord.latitude}&lng=${eventCoord.longitude}&content=${content}`,
       }
     );
 
@@ -111,7 +113,6 @@ function MapScreen() {
   };
   
   const handleConfirm = (date) => {
-    console.warn("A date has been picked: ", date);
     hideDatePicker();
   };
 
@@ -125,7 +126,7 @@ function MapScreen() {
      body: null
     });
     const responseFromServerFilterJson = await responseFromServerFilter.json();
-    console.log("FILTER====>",responseFromServerFilterJson)
+    //console.log("FILTER====>",responseFromServerFilterJson)
     setEventMarker(responseFromServerFilterJson.data)
 
 
@@ -136,8 +137,12 @@ function MapScreen() {
     
   };
 
-  console.log("test after filter", eventMarker)
+  //console.log("test after filter", eventMarker)
+  const sendToShow = (eventTopushStore) => {
+    props.onMarkerClick(eventTopushStore)
+    props.navigation.navigate('EventScreen')
 
+  }
   return (
     <View style={{ flex: 1 }}>
       <Overlay
@@ -147,13 +152,13 @@ function MapScreen() {
       >
         <View>
         <GooglePlacesAutocomplete
-        placeholder="Where are you going?"
+        placeholder="Ex: 3 rue des Acacias"
         fetchDetails={true}
         GooglePlacesSearchQuery={{
           rankby: "distance",
         }}
         onPress={(data, details = null) => {
-          console.log("Data&Details ====>", details);
+          //console.log("Data&Details ====>", details);
           setRegion({
             latitude: details.geometry.location.lat,
             longitude: details.geometry.location.lng,
@@ -195,7 +200,7 @@ function MapScreen() {
             />
 
             <Input style={{ height: 100 }}
-            placeholder='Ex: Viens check ce concert !'
+            placeholder="Ex: Participer au concert de piano de l'école de musique!"
 	          multiline={ true }
             value={ content }
             numberOfLines={ 4 }
@@ -208,11 +213,6 @@ function MapScreen() {
                     onConfirm={handleConfirm}
                     onCancel={hideDatePicker}
                 />
-            
-
-            
-            
-
           
           {
           categories.map((category, i) => (
@@ -223,11 +223,11 @@ function MapScreen() {
           ))
         }
          <Button
-            title="Close the window"
+            title="Fermer la fenêtre"
             onPress={() => setVisible(false)}
             />
             <Button
-            title="Add an event"
+            title="Ajouter un évènement"
             onPress={() => addEvent()}/>
         </View>
        
@@ -246,12 +246,12 @@ function MapScreen() {
           </Button>
         ))}
         
-        <Button title="Close the window" onPress={() => setVisibleFilter(false)}/>
-        <Button title="Filter event" onPress={() => {filterEvent();setVisibleFilter(false)}} />
+        <Button title="Fermer la fenêtre" onPress={() => setVisibleFilter(false)}/>
+        <Button title="Filtrer les évènements" onPress={() => {filterEvent();setVisibleFilter(false)}} />
       </Overlay>
        
-          <Button title="Open Overlay" onPress={toggleOverlay} />
-          <Button title="Filter" onPress={toggleOverlayFilter} />
+          <Button title="Ajouter un évènement" onPress={toggleOverlay} />
+          <Button title="Filtrer" onPress={toggleOverlayFilter} />
       
       
 
@@ -267,7 +267,7 @@ function MapScreen() {
       >
         {
         eventMarker.map((event, i) => {
-          
+          console.log(" cat loop", event)
           categories.map((categorie, i) => {
             if (categorie._id == event.eventCategoryId) {
               catName = categorie.name;
@@ -276,6 +276,7 @@ function MapScreen() {
 
           return (
             <Marker
+            onPress={() => sendToShow(event) }
               key={i}
               pinColor="orange"
               coordinate={{ latitude: event.lat, longitude: event.lng }}
@@ -288,7 +289,7 @@ function MapScreen() {
           key={"currentPos"}
           pinColor="red"
           title="Hello"
-          description="I'am here"
+          description="Vous êtes ici!"
           coordinate={{
             latitude: currentLatitude,
             longitude: currentLongitude,
@@ -313,4 +314,20 @@ const styles = StyleSheet.create({
   
 });
 
-export default MapScreen;
+function mapDispatchToProps(dispatch) {
+  return {
+    onMarkerClick: function(userEvent) { 
+      dispatch( {type: 'readEvent', diplayEvent: userEvent}) 
+    }
+  }
+}
+
+function mapStateToProps(state) {
+  return { token: state  }
+}
+
+export default connect(
+  mapStateToProps, 
+  mapDispatchToProps
+)(MapScreen);
+

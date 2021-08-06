@@ -12,21 +12,21 @@ const SignupScreen = (props) => {
     const [confirmPassword, setConfirmPassword] = useState();
     const [error, setError] = useState('');
     const addNewuser = async () => {
-        props.navigation.navigate('MapScreen')
-        // const responseFromServer = await fetch('https://my-tieks-0001.herokuapp.com/sign-up', {
-        //     method: 'POST',
-        //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        //     body:`email=${email}&password=${password}`
-        // })
+        //props.navigation.navigate('MapScreen')
+        const responseFromServer = await fetch('https://my-tieks-0001.herokuapp.com/sign-up', {
+            method: 'POST',
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body:`email=${email}&password=${password}`
+        })
 
-        // const responseFromServerJson = await responseFromServer.json()
-        // if(responseFromServerJson.result){
-        //    props.navigation.navigate('MapScreen')
-        //    props.onSubmitToken(responseFromServerJson.token)
-        // }else {
-        //     setError('Please sign in')
-        //     return error
-        // }
+        const responseFromServerJson = await responseFromServer.json()
+        if(responseFromServerJson.result){
+           props.navigation.navigate('MapScreen')
+           props.onSubmitToken(responseFromServerJson.token)
+        }else {
+            setError('Please sign in')
+            return error
+        }
     }
     return(
 
@@ -39,7 +39,7 @@ const SignupScreen = (props) => {
                 style={styles.logo}
             />
             <Text>{error}</Text>
-            <Text style={styles.text}>Create An Account</Text>
+            <Text style={styles.text}>My Tieks</Text>
             <FormInput
                 labelValue={email}
                 onChangeText={(userEmail) => setEmail(userEmail)}
@@ -52,14 +52,14 @@ const SignupScreen = (props) => {
             <FormInput
                 labelValue={password}
                 onChangeText={(userPassword) => setPassword(userPassword)}
-                placeholderText="Password"
+                placeholderText="Mot de Passe"
                 iconType="lock"
                 secureTextEntry={true}
             />
             <FormInput
                 labelValue={confirmPassword}
                 onChangeText={(userPassword) => setConfirmPassword(userPassword)}
-                placeholderText="Confirm Password"
+                placeholderText="Confirmé le Mot de Passe"
                 iconType="lock"
                 secureTextEntry={true}
             />
@@ -70,7 +70,7 @@ const SignupScreen = (props) => {
             
 
             <TouchableOpacity style={styles.navButton} onPress={() => props.navigation.navigate('Login')}>
-                <Text style={styles.navButtonText}>Have an account? Sign in</Text>
+                <Text style={styles.navButtonText}>Vous avez déjà un compte? Se Connecter</Text>
             </TouchableOpacity>
 
             </KeyboardAvoidingView>
